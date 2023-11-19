@@ -97,17 +97,18 @@ def tratar_arquivo(arquivo, id_transacao):
             titulo = {
                 'cod_cedente': transacao[8:19],
                 'nosso_numero': transacao[198:213],
-                'protocolo': transacao[447:457],
+                'protocolo': transacao[447:457].strip(),
                 'ocorrencia': transacao[457:458],
                 'data_protocolo': datetime.strptime(transacao[458:466], "%d%m%Y").date().strftime("%d-%m-%Y"),
                 'custas_cartorio': float(int(transacao[466:476])/100),
-                'data_ocorrencia': datetime.strptime(transacao[477:485], "%d%m%Y").date().strftime("%d-%m-%Y"),
-                'cod_irregularidade': int(transacao[4485:487]),
                 'custas_distribuicao': float(int(transacao[507:517])/100),
                 'compl_cod_irregularidade': transacao[557:565]
             }
+            if transacao[485:487] != "  ":
+                titulo['data_ocorrencia'] = datetime.strptime(transacao[477:485], "%d%m%Y").date().strftime("%d-%m-%Y")
+                titulo['cod_irregularidade'] = int(transacao[485:487])
             lista_titulos.append(titulo)
-    elif id_transacao == 'TRP':  # Retorno da remessa
+    elif id_transacao == 'RTP':  # Retorno da remessa
         for transacao in arquivo:
             titulo = {
                 'cod_cedente': transacao[8:19],
@@ -115,9 +116,10 @@ def tratar_arquivo(arquivo, id_transacao):
                 'saldo_titulo': float(int(transacao[260:274])/100),
                 'ocorrencia': transacao[457:458],
                 'custas_cartorio': float(int(transacao[466:476]) / 100),
-                'data_ocorrencia': datetime.strptime(transacao[477:485], "%d%m%Y").date().strftime("%d-%m-%Y"),
-                'cod_irregularidade': int(transacao[4485:487]),
                 'compl_cod_irregularidade': transacao[557:565]
             }
+            if transacao[485:487] != "  ":
+                titulo['data_ocorrencia'] = datetime.strptime(transacao[477:485], "%d%m%Y").date().strftime("%d-%m-%Y")
+                titulo['cod_irregularidade'] = int(transacao[485:487])
             lista_titulos.append(titulo)
     return lista_titulos

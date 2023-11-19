@@ -1,4 +1,4 @@
-from services import ler_arquivo, selecionar_arquivo, extrair_header
+from services import ler_arquivo, selecionar_arquivo, extrair_header, extrair_trailler, tratar_arquivo
 
 while True:
 
@@ -23,12 +23,12 @@ while True:
         for i in arquivo_bruto:
              print(f'{i}')
         header = extrair_header(arquivo_bruto)
+        arquivo_bruto.pop(0)
+        trailler = extrair_trailler(arquivo_bruto)
+        arquivo_bruto.pop()
         print(header)
-        # arquivo_bruto.pop(0)
-        # trailler = services.extrair_trailler(arquivo_bruto)
-        # arquivo_bruto.pop()
-        # print(header)
-        # print(trailler)
-        # titulos = services.tratar_arquivo(arquivo_bruto, header['id_transacao'])
-        # for i in titulos:
-        #     print(i)
+        print(trailler)
+        print(header['id_transacao'])
+        titulos = tratar_arquivo(arquivo_bruto, header['id_transacao'])
+        for i in titulos:
+            print(i)
