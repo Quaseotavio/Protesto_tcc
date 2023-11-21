@@ -123,3 +123,38 @@ def tratar_arquivo(arquivo, id_transacao):
                 titulo['cod_irregularidade'] = int(transacao[485:487])
             lista_titulos.append(titulo)
     return lista_titulos
+
+
+def validar_arquivo(arquivo, header, trailler):
+    flag_quantidade = flag_valor = validacao = False
+    message = ''
+    if header['id_transacao'] in ['TPR', 'CRT']:  # Remessa para protesto e confirmação de remessa
+        qtd_geral = qtd_indicacoes = qtd_originais = soma = 0
+        for transacao in arquivo:
+            qtd_geral += 1
+            soma += transacao['saldo_titulo']
+            if transacao['especie_titulo'] in ['DMI', 'DRI', 'CBI']:
+                qtd_indicacoes += 1
+            else:
+                qtd_originais += 1
+        if qtd_geral * 2 + qtd_indicacoes + qtd_originais == trailler['checksum_qtd']:
+            flag_quantidade = True
+        if soma == trailler['checksum_valor']:
+            flag_valor = True
+    elif header['id_transacao'] == 'RTP':  # Retorno de protesto
+        soma = quantidade = 0
+        for transacao in arquivo:
+            quantidade += 1
+            soma += transacao['saldo_titulo']
+        if quantidade == trailler['checksum_qtd']:
+            flag_quantidade = True
+        if soma == trailler['checksum_valor']:
+            flag_valor = True
+    else:
+        print('Tipo de arquivo não definido.')
+    if not flag_quantidade or not flag_valor:
+        message = 'Arquivo não validado! Verifique a soma da quantidade de títulos ou do saldo dos títulos'
+    if flag_valor and flag_quantidade:
+        message = 'Arquivo validado com sucesso.'
+        validacao = True
+    return validacao, message

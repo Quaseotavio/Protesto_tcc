@@ -1,4 +1,4 @@
-from services import ler_arquivo, selecionar_arquivo, extrair_header, extrair_trailler, tratar_arquivo
+from services import ler_arquivo, selecionar_arquivo, extrair_header, extrair_trailler, tratar_arquivo, validar_arquivo
 
 while True:
 
@@ -20,15 +20,10 @@ while True:
         break
     elif opt == 1:
         arquivo_bruto = ler_arquivo(selecionar_arquivo())
-        for i in arquivo_bruto:
-             print(f'{i}')
         header = extrair_header(arquivo_bruto)
         arquivo_bruto.pop(0)
         trailler = extrair_trailler(arquivo_bruto)
         arquivo_bruto.pop()
-        print(header)
-        print(trailler)
-        print(header['id_transacao'])
         titulos = tratar_arquivo(arquivo_bruto, header['id_transacao'])
-        for i in titulos:
-            print(i)
+        validacao, mensagem = validar_arquivo(titulos, header, trailler)
+        print(mensagem)
