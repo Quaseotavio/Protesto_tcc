@@ -3,7 +3,7 @@ from tkinter import filedialog
 from datetime import datetime
 
 
-def selecionar_arquivo():
+def SelecionarArquivo():
     root = tk.Tk()
     root.withdraw()
     root.attributes('-topmost', True)
@@ -14,7 +14,7 @@ def selecionar_arquivo():
     return local_arquivo
 
 
-def ler_arquivo(local):
+def LerArquivo(local):
     try:
         with open(local, 'r') as arquivo:
             lines = arquivo.readlines()
@@ -26,7 +26,7 @@ def ler_arquivo(local):
         print(f'Ocorreu o erro {e}')
 
 
-def extrair_header(arquivo):
+def ExtrairHeader(arquivo):
     extracted_header = arquivo[0]
     if extracted_header[0] != '0':
         return Exception
@@ -45,7 +45,7 @@ def extrair_header(arquivo):
         return split_header
 
 
-def extrair_trailler(arquivo):
+def ExtrairTrailler(arquivo):
     extracted_trailler = arquivo[-1]
     if extracted_trailler[0] != '9':
         return Exception
@@ -58,7 +58,7 @@ def extrair_trailler(arquivo):
         return split_trailler
 
 
-def tratar_arquivo(arquivo, id_transacao):
+def TratarArquivo(arquivo, id_transacao):
     lista_titulos = []
     if id_transacao == 'TPR':  # Remessa para protesto
         for transacao in arquivo:
@@ -139,7 +139,7 @@ def validar_arquivo(arquivo, header, trailler):
                 qtd_originais += 1
         if qtd_geral * 2 + qtd_indicacoes + qtd_originais == trailler['checksum_qtd']:
             flag_quantidade = True
-        if soma == trailler['checksum_valor']:
+        if round(soma, 2) == trailler['checksum_valor']:
             flag_valor = True
     elif header['id_transacao'] == 'RTP':  # Retorno de protesto
         soma = quantidade = 0
@@ -158,3 +158,4 @@ def validar_arquivo(arquivo, header, trailler):
         message = 'Arquivo validado com sucesso.'
         validacao = True
     return validacao, message
+
