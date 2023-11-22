@@ -23,15 +23,15 @@ while True:
         print('Encerrando aplicação.')
         break
     elif opt == 1:
-        arquivo_bruto = s.LerArquivo(s.SelecionarArquivo())
-        header = s.ExtrairHeader(arquivo_bruto)
+        arquivo_bruto = s.ler_arquivo(s.selecionar_arquivo())
+        header = s.extrair_header(arquivo_bruto)
         arquivo_bruto.pop(0)
-        trailler = s.ExtrairTrailler(arquivo_bruto)
+        trailler = s.extrair_trailler(arquivo_bruto)
         arquivo_bruto.pop()
-        titulos = s.TratarArquivo(arquivo_bruto, header['id_transacao'])
+        titulos = s.tratar_arquivo(arquivo_bruto, header['id_transacao'])
         validacao, mensagem = s.validar_arquivo(titulos, header, trailler)
         print(mensagem)
         if validacao:
-            p.GravaDados()
+            p.grava_dados()
         print('Pressione qualquer tecla para continuar...')
         input()

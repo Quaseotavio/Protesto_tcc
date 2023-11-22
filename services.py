@@ -3,7 +3,7 @@ from tkinter import filedialog
 from datetime import datetime
 
 
-def SelecionarArquivo():
+def selecionar_arquivo():
     root = tk.Tk()
     root.withdraw()
     root.attributes('-topmost', True)
@@ -14,7 +14,7 @@ def SelecionarArquivo():
     return local_arquivo
 
 
-def LerArquivo(local):
+def ler_arquivo(local):
     try:
         with open(local, 'r') as arquivo:
             lines = arquivo.readlines()
@@ -26,7 +26,7 @@ def LerArquivo(local):
         print(f'Ocorreu o erro {e}')
 
 
-def ExtrairHeader(arquivo):
+def extrair_header(arquivo):
     extracted_header = arquivo[0]
     if extracted_header[0] != '0':
         return Exception
@@ -45,7 +45,7 @@ def ExtrairHeader(arquivo):
         return split_header
 
 
-def ExtrairTrailler(arquivo):
+def extrair_trailler(arquivo):
     extracted_trailler = arquivo[-1]
     if extracted_trailler[0] != '9':
         return Exception
@@ -58,7 +58,7 @@ def ExtrairTrailler(arquivo):
         return split_trailler
 
 
-def TratarArquivo(arquivo, id_transacao):
+def tratar_arquivo(arquivo, id_transacao):
     lista_titulos = []
     if id_transacao == 'TPR':  # Remessa para protesto
         for transacao in arquivo:
@@ -158,4 +158,3 @@ def validar_arquivo(arquivo, header, trailler):
         message = 'Arquivo validado com sucesso.'
         validacao = True
     return validacao, message
-

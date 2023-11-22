@@ -1,6 +1,7 @@
 import mysql.connector
 
-def BdConnect():
+
+def bd_connect():
     conexao_bd = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -8,13 +9,13 @@ def BdConnect():
         database="protesto_tcc"
     )
     cursor = conexao_bd.cursor()
-    if ValidaBd(cursor):
+    if valida_bd(cursor):
         return cursor
     else:
         return
 
 
-def ValidaBd(cursor):
+def valida_bd(cursor):
     validacao = True
     tabelas = ["arquivo_remessa", "transacao_remessa", "transacao", "arquivo_retorno", "transacao_retorno",
                "codigos_ocorrencia", "especies_titulos", "codigos_irregularidade"]
@@ -27,6 +28,6 @@ def ValidaBd(cursor):
     return validacao
 
 
-def GravaDados():
-    BdConnect()
+def grava_dados():
+    bd_connect()
     return
