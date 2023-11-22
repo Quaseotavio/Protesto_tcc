@@ -170,8 +170,9 @@ def montar_remessa(arquivo):
         quantidade = soma = c = 0
         print(f"SEQ {'COD CEDENTE':<15}{'NOSSO NUMERO':<20}{'CEDENTE':<45}{'SACADO':<45}{'DT VENC':<10}{'VALOR'}")
         for titulo in arquivo:
-            print(f"{c+1}   {titulo['cod_cedente']:.<15}{titulo['nosso_numero']:.<20}{titulo['nome_cedente']:.<45}", end='')
-            print(f"{titulo['nome_devedor']:.<45}{titulo['data_vencimento']} R$ {titulo['saldo_titulo']:.2f}")
+            print(f"{c+1}   {titulo['cod_cedente']:.<15}{titulo['nosso_numero']:.<20}", end='')
+            print(f"{titulo['nome_cedente']:.<45}{titulo['nome_devedor']:.<45}{titulo['data_vencimento']}", end='')
+            print(f" R$ {titulo['saldo_titulo']:.2f}")
             quantidade += 1
             c += 1
             soma += round(titulo['saldo_titulo'], 2)
@@ -190,7 +191,7 @@ def montar_remessa(arquivo):
             if conf == 'S':
                 break
         elif opt == 1:
-            #  arquivo.append(inserir_titulo())
+            arquivo.append(inserir_titulo())
             pass
         elif opt == 2:
             tit_rem = int(input('Informe o SEQ do título que deseja remover: '))
@@ -201,3 +202,47 @@ def montar_remessa(arquivo):
             #  gerar_remessa(arquivo)
             pass
     return
+
+
+def inserir_titulo():
+    novo_titulo = {
+        'cod_agencia': str(input('Código da agência: ')).strip()[:4],
+        'cod_cedente': str(input('Código do cedente: ')).strip()[:11],
+        'nome_cedente': str(input('Nome do cedente: ')).upper().strip()[:45],
+        'nome_sacador': str(input('Nome do sacador: ')).upper().strip()[:45],
+        'tipo_doc_devedor': int(input('Tipo de documento do sacador (001 - CPF  002 - CNPJ): ')),
+        'doc_sacador': str(input("CPF ou CNPJ do sacador: ")).strip()[:14],
+        'end_sacador': str(input('Endereço do sacador: ')).strip()[:45],
+        'bairro_devedor': str(input('Bairro do sacador: ')).upper().strip()[:20],
+        'cep_sacador': str(input('CEP do sacador: ')).strip()[:8],
+        'cidade_sacador': str(input('Cidade do sacador: ')).upper().strip()[:20],
+        'uf_sacador': str(input('UF do sacador: ')).upper().strip()[:2],
+        'nosso_numero': str(input('Nosso número: '))[:15],
+        'especie_titulo': str(input('Espécie do título: ')).upper().strip()[:3],
+        'num_titulo': str(input('Número do título (cadastrado pelo cedente): ')).strip()[:11],
+        'data_emissao': datetime.strptime(input('Data de emissão (dd-mm-yyyy): '), "%d-%m-%Y").date(),
+        'data_vencimento': datetime.strptime(input('Data de vencimento (dd-mm-yyyy): '), "%d-%m-%Y").date(),
+        'valor_titulo': float(input('Valor do título: R$ ')),
+        'endosso': str(input('Endosso (M - Mandato, T - Translativo, Branco - Sem endosso): ')).upper().strip()[0],
+        'aceite': str(input('Aceite pelo devedor (N - Não Aceito, A - Aceito): ')).upper().strip()[0],
+        'nome_devedor': '', 'doc_devedor': '', 'endereco_devedor': '', 'cep_devedor': '', 'cidade_devedor': '',
+        'uf_devedor': '', 'doc_devedor_pf': '',
+        'saldo_titulo': 0
+    }
+    novo_titulo['saldo_titulo'] = novo_titulo['valor_titulo']
+    q = str(input('Sacado e devedor são o mesmo? [S/N]')).upper().strip()[0]
+    while q not in 'SN':
+        q = str(input('Opção inválida. Sacado e devedor são o mesmo? [S/N]')).upper().strip()[0]
+    if q == 'S':
+        novo_titulo['nome_devedor'] = novo_titulo['nome_sacador']
+        novo_titulo['doc_devedor'] = novo_titulo['doc_sacador']
+        novo_titulo['endereco_devedor'] = novo_titulo['end_sacador']
+        novo_titulo['cep_devedor'] = novo_titulo['cep_sacador']
+        novo_titulo['uf_devedor'] = novo_titulo['uf_sacador']
+    elif q == 'N':
+        novo_titulo['nome_devedor'] = str(input('Nome do devedor: ')).upper().strip()[45]
+        novo_titulo['doc_devedor'] = str(input("CPF ou CNPJ do devedor: ")).strip()[14]
+        novo_titulo['endereco_devedor'] = str(input('Endereço do devedor: ')).strip()[45]
+        novo_titulo['cep_devedor'] = str(input('CEP do devedor: ')).strip()[8]
+        novo_titulo['uf_devedor'] = str(input('UF do devedor: ')).upper().strip()[2]
+    return novo_titulo
