@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from datetime import datetime
+import os
 
 
 def selecionar_arquivo():
@@ -76,7 +77,7 @@ def tratar_arquivo(arquivo, id_transacao):
                 'especie_titulo': transacao[213:216],
                 'num_titulo': transacao[216:227],
                 'data_emissao': datetime.strptime(transacao[227:235], "%d%m%Y").date().strftime("%d-%m-%Y"),
-                'data_vecimento': datetime.strptime(transacao[235:243], "%d%m%Y").date().strftime("%d-%m-%Y"),
+                'data_vencimento': datetime.strptime(transacao[235:243], "%d%m%Y").date().strftime("%d-%m-%Y"),
                 'valor_titulo': float(int(transacao[246:260])/100),
                 'saldo_titulo': float(int(transacao[260:274])/100),
                 'endosso': transacao[294:295],
@@ -158,3 +159,45 @@ def validar_arquivo(arquivo, header, trailler):
         message = 'Arquivo validado com sucesso.'
         validacao = True
     return validacao, message
+
+
+def montar_remessa(arquivo):
+    while True:
+        os.system('cls')
+        print('=' * 150)
+        print(f"{'MONTAGEM DE NOVA REMESSA':^150}")
+        print('=' * 150)
+        quantidade = soma = c = 0
+        print(f"SEQ {'COD CEDENTE':<15}{'NOSSO NUMERO':<20}{'CEDENTE':<45}{'SACADO':<45}{'DT VENC':<10}{'VALOR'}")
+        for titulo in arquivo:
+            print(f"{c+1}   {titulo['cod_cedente']:.<15}{titulo['nosso_numero']:.<20}{titulo['nome_cedente']:.<45}", end='')
+            print(f"{titulo['nome_devedor']:.<45}{titulo['data_vencimento']} R$ {titulo['saldo_titulo']:.2f}")
+            quantidade += 1
+            c += 1
+            soma += round(titulo['saldo_titulo'], 2)
+        print(f"QUANTIDADE: {quantidade}         VALOR: R$ {soma}")
+        print('''\nEssa é a remessa atual. Escolha o que deseja fazer:
+        1 - INSERIR NOVO TITULO
+        2 - REMOVER TITULO DA REMESSA
+        3 - FECHAR REMESSA
+        0 - CANCELAR E VOLTAR PARA O MENU ANTERIOR''')
+        opt = int(input('>>: '))
+        while opt not in [0, 1, 2, 3]:
+            opt = int(input('Opção inválida. Informe sua opção: '))
+        if opt == 0:
+            print('A remessa atual será perdida e o arquivo deverá ser lido novamente.')
+            conf = str(input('Deseja continuar? [S/N] ')).strip().upper()[0]
+            if conf == 'S':
+                break
+        elif opt == 1:
+            #  arquivo.append(inserir_titulo())
+            pass
+        elif opt == 2:
+            tit_rem = int(input('Informe o SEQ do título que deseja remover: '))
+            while tit_rem not in range(1, len(arquivo)+1):
+                tit_rem = int(input('Opção inválida. Informe o SEQ do título que deseja remover: '))
+            arquivo.pop(tit_rem-1)
+        elif opt == 3:
+            #  gerar_remessa(arquivo)
+            pass
+    return

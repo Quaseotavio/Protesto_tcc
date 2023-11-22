@@ -29,5 +29,6 @@ def valida_bd(cursor):
 
 
 def grava_dados():
-    bd_connect()
+    cursor = bd_connect()
+
     return

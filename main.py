@@ -3,7 +3,6 @@ import persistence as p
 import os
 
 
-
 while True:
     os.system('cls')
     print('=' * 50)
@@ -31,7 +30,10 @@ while True:
         titulos = s.tratar_arquivo(arquivo_bruto, header['id_transacao'])
         validacao, mensagem = s.validar_arquivo(titulos, header, trailler)
         print(mensagem)
-        if validacao:
-            p.grava_dados()
-        print('Pressione qualquer tecla para continuar...')
-        input()
+        if header['id_transacao'] == 'TPR':
+            print('Você enviou um arquivo de nova remessa.')
+            print('Pressione qualquer tecla para continuar a montagem da remessa.')
+            input()
+            s.montar_remessa(titulos)
+        # if validacao:
+        #     p.grava_dados(header, titulos)
