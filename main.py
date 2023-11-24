@@ -34,6 +34,6 @@ while True:
             print('Você enviou um arquivo de nova remessa.')
             print('Pressione qualquer tecla para continuar a montagem da remessa.')
             input()
-            s.montar_remessa(titulos)
+            s.montar_remessa(titulos, header)
         # if validacao:
         #     p.grava_dados(header, titulos)

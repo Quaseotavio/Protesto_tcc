@@ -3,6 +3,8 @@ from tkinter import filedialog
 from datetime import datetime
 import os
 
+HOJE = datetime.now().strftime("%d%m%Y")
+
 
 def selecionar_arquivo():
     root = tk.Tk()
@@ -76,8 +78,8 @@ def tratar_arquivo(arquivo, id_transacao):
                 'nosso_numero': transacao[198:213],
                 'especie_titulo': transacao[213:216],
                 'num_titulo': transacao[216:227],
-                'data_emissao': datetime.strptime(transacao[227:235], "%d%m%Y").date().strftime("%d-%m-%Y"),
-                'data_vencimento': datetime.strptime(transacao[235:243], "%d%m%Y").date().strftime("%d-%m-%Y"),
+                'data_emissao': datetime.strptime(transacao[227:235], "%d%m%Y").date().strftime("%d%m%Y"),
+                'data_vencimento': datetime.strptime(transacao[235:243], "%d%m%Y").date().strftime("%d%m%Y"),
                 'valor_titulo': float(int(transacao[246:260])/100),
                 'saldo_titulo': float(int(transacao[260:274])/100),
                 'endosso': transacao[294:295],
@@ -161,7 +163,7 @@ def validar_arquivo(arquivo, header, trailler):
     return validacao, message
 
 
-def montar_remessa(arquivo):
+def montar_remessa(arquivo, header):
     while True:
         os.system('cls')
         print('=' * 150)
@@ -192,15 +194,14 @@ def montar_remessa(arquivo):
                 break
         elif opt == 1:
             arquivo.append(inserir_titulo())
-            pass
         elif opt == 2:
             tit_rem = int(input('Informe o SEQ do título que deseja remover: '))
             while tit_rem not in range(1, len(arquivo)+1):
                 tit_rem = int(input('Opção inválida. Informe o SEQ do título que deseja remover: '))
             arquivo.pop(tit_rem-1)
         elif opt == 3:
-            #  gerar_remessa(arquivo)
-            pass
+            gerar_remessa(arquivo, header)
+            break
     return
 
 
@@ -246,3 +247,70 @@ def inserir_titulo():
         novo_titulo['cep_devedor'] = str(input('CEP do devedor: ')).strip()[8]
         novo_titulo['uf_devedor'] = str(input('UF do devedor: ')).upper().strip()[2]
     return novo_titulo
+
+
+def gerar_remessa(arq, head):
+    arquivo_final = list()
+    quant_geral = quant_indicacoes = quant_originais = checksum_valor = 0
+    count = 1
+    for t in arq:
+        quant_geral += 1
+        if t['especie_titulo'] in ['DMI', 'DRI', 'CBI']:
+            quant_indicacoes += 1
+        else:
+            quant_originais += 1
+    checksum_qtd = quant_geral * 2 + quant_indicacoes + quant_originais
+    quant_geral = str(quant_geral)
+    quant_indicacoes = str(quant_indicacoes)
+    quant_originais = str(quant_originais)
+    checksum_qtd = '{:0>5}'.format(str(checksum_qtd))
+    header = ('0104' + '{: <40}'.format('BANCO EXEMPLO') + HOJE + "BFOSDTTPR" + head['sequencial'] +
+              '{:0>4}'.format(quant_geral) * 2 + '{:0>4}'.format(quant_indicacoes) + '{:0>4}'.format(quant_originais) +
+              "0099990434127106" + " " * 497 + '0001') + "\n"
+    arquivo_final.append(header)
+    for t in arq:
+        count += 1
+        registro = ("1104" + t['cod_agencia'] +
+                    t['cod_cedente'] +
+                    '{: <45}'.format(t['nome_cedente']) +
+                    '{: <45}'.format(t['nome_sacador']) +
+                    t['doc_sacador'] +
+                    '{: <45}'.format(t['end_sacador']) +
+                    t['cep_sacador'] +
+                    '{: <20}'.format(t['cidade_sacador']) +
+                    t['uf_sacador'] + t['nosso_numero'] +
+                    t['especie_titulo'] +
+                    t['num_titulo'] +
+                    str(t['data_emissao']) +
+                    str(t['data_vencimento'])
+                    + '001' + '{:0>14}'.format(str(int(t['valor_titulo'] * 100))) +
+                    '{:0>14}'.format(str(int(t['saldo_titulo'] * 100))) +
+                    '{: <20}'.format('CIDADE EXEMPLO') + t['endosso'] +
+                    t['aceite'] +
+                    '1' + '{: <45}'.format(t['nome_devedor']) +
+                    '{:0>3}'.format(str(t['tipo_doc_devedor'])) +
+                    t['doc_devedor'] +
+                    t['doc_devedor_pf'] +
+                    '{: <45}'.format(t['endereco_devedor']) +
+                    t['cep_devedor'] +
+                    '{: <20}'.format(t['cidade_devedor']) +
+                    t['uf_devedor'] +
+                    "00           000000000000000000 00000000  " + '{: <20}'.format(t['bairro_devedor']) +
+                    "0" * 49 + " " * 11 + "0" * 10 + " " * 19 + '{:0>4}'.format(str(count)) + "\n"
+                    )
+        arquivo_final.append(registro)
+        checksum_valor += t['saldo_titulo']
+    checksum_valor = '{:0>18}'.format(str(int(checksum_valor * 100)))
+    trailler = ('9104' + '{: <40}'.format('BANCO EXEMPLO') + HOJE + checksum_qtd + checksum_valor +
+                " " * 521 + '{:0>4}'.format(str(count+1)) + "\n")
+    arquivo_final.append(trailler)
+
+    # Salvando o arquivo em .txt
+    caminho = filedialog.asksaveasfilename(defaultextension='.231', filetypes=[("Arquivos de Protesto", "*.231")])
+    if caminho:
+        with open(caminho, 'w') as remessa:
+            for registro in arquivo_final:
+                remessa.write(registro)
+            print('Remessa gerada com sucesso!')
+    else:
+        print('Operação cancelada pelo usuário.')
