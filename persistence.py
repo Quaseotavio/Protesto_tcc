@@ -30,5 +30,9 @@ def valida_bd(cursor):
 
 def grava_dados():
     cursor = bd_connect()
+    return
+
+
+def gravar_header(header):
 
     return
