@@ -36,8 +36,19 @@ def main():
                 print('Pressione qualquer tecla para continuar a montagem da remessa.')
                 input()
                 montar_remessa(titulos, header)
-            # if validacao:
-            #     p.grava_dados(header, titulos)
+            elif header['id_transacao'] == 'CRT':
+                validacao = p.checar_remessa(header)
+                if validacao:
+                    print('Você enviou um arquivo de confirmação de distribuição.')
+                    print('Pressione qualquer tecla para verificar os títulos distribuídos.')
+                    p.distribuir_titulos(titulos, header)
+                    resultado = p.consulta_distribuicao(titulos)
+                    print(resultado)
+                    input()
+                else:
+                    print('Você enviou um arquivo de confirmação de uma remessa que não consta no banco de dados.')
+                    print('O arquivo não será tratado. Pressione qualquer tecla para continuar.')
+                    input()
 
 
 def montar_remessa(arquivo, header):
