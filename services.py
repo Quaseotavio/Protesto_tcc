@@ -34,7 +34,7 @@ def extrair_header(arquivo):
         return Exception
     else:
         split_header = {
-            'data_mov': datetime.strptime(extracted_header[44:52], "%d%m%Y").date().strftime("%d-%m-%Y"),
+            'data_mov': datetime.strptime(extracted_header[44:52], "%d%m%Y").date().strftime("%Y-%m-%d"),
             'id_remetente': extracted_header[52:55],
             'id_destinatario': extracted_header[55:58],
             'id_transacao': extracted_header[58:61],
@@ -269,9 +269,19 @@ def gerar_remessa(arq, head):
             for registro in arquivo_final:
                 remessa.write(registro)
             print('Remessa gerada com sucesso!')
-            print('Os registros foram gravados no banco de dados.')
             print('Pressione qualquer tecla para continuar.')
             input()
     else:
         print('Operação cancelada pelo usuário.')
     return
+
+
+def converte_datas(arq):
+    for reg in arq:
+        dt_emissao = str(reg['data_emissao'])
+        dt_vencimento = str(reg['data_vencimento'])
+        dt_emissao_format = datetime.strptime(dt_emissao, "%d%m%Y").date().strftime("%Y-%m-%d")
+        dt_vencimento_format = datetime.strptime(dt_vencimento, "%d%m%Y").date().strftime("%Y-%m-%d")
+        reg['data_emissao'] = dt_emissao_format
+        reg['data_vencimento'] = dt_vencimento_format
+    return arq

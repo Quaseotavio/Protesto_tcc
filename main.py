@@ -55,7 +55,7 @@ def montar_remessa(arquivo, header):
             quantidade += 1
             c += 1
             soma += round(titulo['saldo_titulo'], 2)
-        print(f"QUANTIDADE: {quantidade}         VALOR: R$ {soma}")
+        print(f"QUANTIDADE: {quantidade}         VALOR: R$ {soma:.2f}")
         print('''\nEssa é a remessa atual. Escolha o que deseja fazer:
         1 - INSERIR NOVO TITULO
         2 - REMOVER TITULO DA REMESSA
@@ -79,6 +79,8 @@ def montar_remessa(arquivo, header):
         elif opt == 3:
             s.gerar_remessa(arquivo, header)
             p.gravar_header(header)
+            arquivo = s.converte_datas(arquivo)
+            p.gravar_registros(arquivo, header['sequencial'])
             break
     return
 

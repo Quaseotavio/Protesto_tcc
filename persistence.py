@@ -10,7 +10,7 @@ def bd_connect():
     )
     cursor = conexao_bd.cursor()
     if valida_bd(cursor):
-        return cursor
+        return cursor, conexao_bd
     else:
         return
 
@@ -28,11 +28,37 @@ def valida_bd(cursor):
     return validacao
 
 
-def grava_dados():
-    cursor = bd_connect()
+def gravar_header(header):
+    cursor, conexao = bd_connect()
+    query = "INSERT INTO arquivo_remessa (sequencial_remessa, data_remessa) VALUES (%s, %s)"
+    param = (header['sequencial'], header['data_mov'])
+    cursor.execute(query, param)
+    conexao.commit()
+    conexao.close()
     return
 
 
-def gravar_header(header):
-
+def gravar_registros(arq, seq):
+    cursor, conexao = bd_connect()
+    # Inserindo os registros na tabela 'transacao'
+    query = '''INSERT INTO transacao
+    (cod_agencia_cedente, cod_cedente, nome_cedente, nome_sacador, doc_sacador, end_sacador, cep_sacador,
+    cidade_sacador, uf_sacador, nosso_numero, especie_titulo, num_titulo, data_emissao, data_vencimento,
+    valor_titulo, saldo_titulo, endosso, aceite, nome_devedor, tipo_doc_devedor, doc_devedor, doc_devedor_pf,
+    endereco_devedor, cep_devedor, cidade_devedor, uf_devedor, bairro_devedor, sequencial_remessa)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    for reg in arq:
+        reg['sequencial'] = seq
+        param = tuple(reg.values())
+        cursor.execute(query, param)
+    conexao.commit()
+    # Vinculando todos os registros a um arquivo remessa na tabela transacao_remessa
+    query = "INSERT INTO transacao_remessa VALUES (%s, %s, %s)"
+    for reg in arq:
+        param = (seq, reg['cod_cedente'], reg['nosso_numero'])
+        cursor.execute(query, param)
+    conexao.commit()
+    conexao.close()
+    print('Os registros foram gravados no banco de dados.')
     return
