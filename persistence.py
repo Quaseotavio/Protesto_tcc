@@ -79,12 +79,12 @@ def checar_remessa(header):
 
 def distribuir_titulos(arq, header):
     cursor, conexao = bd_connect()
-    query = 'UPDATE transacao SET protocolo = %s WHERE nosso_numero = %s'
+    query = 'UPDATE transacao SET protocolo = %s, data_protocolo = %s WHERE nosso_numero = %s'
     for reg in arq:
-        param = (reg['protocolo'], reg['nosso_numero'])
+        param = (reg['protocolo'], header['data_mov'], reg['nosso_numero'])
         cursor.execute(query, param)
     conexao.commit()
-    query = f"UPDATE arquivo_remessa SET confirmacao = True WHERE sequencial = {header['sequencial']}"
+    query = f"UPDATE arquivo_remessa SET confirmacao = True WHERE sequencial_remessa = {header['sequencial']}"
     cursor.execute(query)
     conexao.commit()
     conexao.close()
@@ -94,10 +94,10 @@ def distribuir_titulos(arq, header):
 def consulta_distribuicao(arq):
     resultado = list()
     cursor, conexao = bd_connect()
-    query = '''SELECT cod_cedente, nome_cedente, nome_sacador, nosso_numero, protocolo 
+    query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo 
     FROM transacao WHERE nosso_numero = %s'''
     for reg in arq:
-        param = reg['nosso_numero']
+        param = (reg['nosso_numero'],)
         cursor.execute(query, param)
         resultado.append(cursor.fetchall())
     return resultado

@@ -99,6 +99,8 @@ def tratar_arquivo(arquivo, id_transacao):
             titulo = {
                 'cod_cedente': transacao[8:19],
                 'nosso_numero': transacao[198:213],
+                'especie_titulo': transacao[213:216],
+                'saldo_titulo': float(int(transacao[260:274]) / 100),
                 'protocolo': transacao[447:457].strip(),
                 'ocorrencia': transacao[457:458],
                 'data_protocolo': datetime.strptime(transacao[458:466], "%d%m%Y").date().strftime("%d-%m-%Y"),
