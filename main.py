@@ -100,14 +100,13 @@ def montar_remessa(arquivo, header):
 
 def imprime_titulos(arq, tipo):
     conteudo = p.consulta_titulos(arq, tipo)
-    print(conteudo)
     if not conteudo:
         return 'Nenhum resultado encontrado.'
     tabela = PrettyTable()
     tabela.field_names = ["COD CEDENTE", "CEDENTE", "DEVEDOR", "NOSSO NUMERO", "PROTOCOLO", "STATUS"]
     for linha in conteudo:
         for reg in linha:
-         tabela.add_row(reg)
+            tabela.add_row(reg)
     return tabela
 
 
