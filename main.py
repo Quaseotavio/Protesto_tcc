@@ -52,10 +52,13 @@ def main():
                     print('O arquivo não será tratado. Pressione qualquer tecla para continuar.')
                     input()
         elif opt == 2:
-            print(imprime_titulos(False, '0'))
+            print(imprime_titulos(False, "'0'"))
             print('Pressione qualquer tecla para continuar.')
             input()
-
+        elif opt == 3:
+            print(imprime_titulos(False, False))
+            print('Pressione qualquer tecla para continuar.')
+            input()
 
 def montar_remessa(arquivo, header):
     while True:
