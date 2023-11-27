@@ -56,7 +56,9 @@ def main():
                 validacao = p.checar_retorno(titulos)
                 if validacao:
                     print('Pressione qualquer tecla para prosseguir no tratamento do retorno.')
+                    input()
                     p.retornar_titulos(titulos, header)
+                    print(imprime_titulos(titulos, False))
                 else:
                     print('O arquivo de retorno enviado possui títulos que não passaram pela distribuição.')
                     print('O arquivo não será tratado. Verifique e tente novamente.')

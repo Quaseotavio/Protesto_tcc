@@ -101,6 +101,7 @@ def consulta_titulos_arq(arq, tipo):
         param = (tipo, reg['nosso_numero'],)
         cursor.execute(query, param)
         resultado.append(cursor.fetchall())
+    conexao.close()
     return resultado
 
 
@@ -119,6 +120,7 @@ def consulta_titulos_geral(tipo):
         ORDER BY t.protocolo'''
     cursor.execute(query)
     resultado.append(cursor.fetchall())
+    conexao.close()
     return resultado
 
 
@@ -132,8 +134,26 @@ def checar_retorno(arq):
         response = cursor.fetchone()
         if response is None:
             validacao = False
+    conexao.close()
     return validacao
 
 
 def retornar_titulos(arq, header):
+    cursor, conexao = bd_connect()
+    query = '''UPDATE transacao SET saldo_titulo = %s, ocorrencia = %s, custas_cartorio = %s, 
+                compl_cod_irregularidade = %s, data_ocorrencia = %s WHERE nosso_numero = %s'''
+    for tit in arq:
+        param = (tit['saldo_titulo'], tit['ocorrencia'], tit['custas_cartorio'], tit['compl_cod_irregularidade'],
+                 tit['data_ocorrencia'], tit['nosso_numero'])
+        cursor.execute(query, param)
+    query = '''INSERT INTO arquivo_retorno VALUES (%s, %s)'''
+    param = (header['data_mov'], header['qtd_registros'])
+    cursor.execute(query, param)
+    query = '''INSERT INTO transacao_retorno VALUES (%s, %s, %s)'''
+    for tit in arq:
+        param = (header['data_mov'], tit['cod_cedente'], tit['nosso_numero'])
+        cursor.execute(query, param)
+    conexao.commit()
+    conexao.close()
+    print('Dados gravados com sucesso!')
     return

@@ -123,7 +123,7 @@ def tratar_arquivo(arquivo, id_transacao):
                 'compl_cod_irregularidade': transacao[557:565]
             }
             if transacao[485:487] != "  ":
-                titulo['data_ocorrencia'] = datetime.strptime(transacao[477:485], "%d%m%Y").date().strftime("%d-%m-%Y")
+                titulo['data_ocorrencia'] = datetime.strptime(transacao[477:485], "%d%m%Y").date().strftime("%Y-%m-%d")
                 titulo['cod_irregularidade'] = int(transacao[485:487])
             lista_titulos.append(titulo)
     return lista_titulos
