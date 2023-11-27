@@ -120,3 +120,20 @@ def consulta_titulos_geral(tipo):
     cursor.execute(query)
     resultado.append(cursor.fetchall())
     return resultado
+
+
+def checar_retorno(arq):
+    validacao = True
+    cursor, conexao = bd_connect()
+    query = '''SELECT nosso_numero FROM transacao WHERE nosso_numero = %s'''
+    for reg in arq:
+        param = (reg['nosso_numero'], )
+        cursor.execute(query, param)
+        response = cursor.fetchone()
+        if response is None:
+            validacao = False
+    return validacao
+
+
+def retornar_titulos(arq, header):
+    return

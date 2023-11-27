@@ -51,6 +51,19 @@ def main():
                     print('Você enviou um arquivo de confirmação de uma remessa que não consta no banco de dados.')
                     print('O arquivo não será tratado. Pressione qualquer tecla para continuar.')
                     input()
+            elif header['id_transacao'] == 'RTP':
+                print('Você enviou um arquivo de retorno do cartório de protesto.')
+                validacao = p.checar_retorno(titulos)
+                if validacao:
+                    print('Pressione qualquer tecla para prosseguir no tratamento do retorno.')
+                    p.retornar_titulos(titulos, header)
+                else:
+                    print('O arquivo de retorno enviado possui títulos que não passaram pela distribuição.')
+                    print('O arquivo não será tratado. Verifique e tente novamente.')
+                    input()
+            else:
+                print('Você enviou um arquivo inválido.')
+                input()
         elif opt == 2:
             print(imprime_titulos(False, "'0'"))
             print('Pressione qualquer tecla para continuar.')
@@ -59,6 +72,7 @@ def main():
             print(imprime_titulos(False, False))
             print('Pressione qualquer tecla para continuar.')
             input()
+
 
 def montar_remessa(arquivo, header):
     while True:
