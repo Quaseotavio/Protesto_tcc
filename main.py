@@ -131,7 +131,8 @@ def imprime_titulos(arq, tipo):
     if not conteudo:
         return 'Nenhum resultado encontrado.'
     tabela = PrettyTable()
-    tabela.field_names = ["COD CEDENTE", "CEDENTE", "DEVEDOR", "NOSSO NUMERO", "PROTOCOLO", "STATUS"]
+    tabela.field_names = ["COD CEDENTE", "CEDENTE", "DEVEDOR", "NOSSO NUMERO", "PROTOCOLO", "VALOR TITULO",
+                          "SALDO TÍTULO", "STATUS"]
     for linha in conteudo:
         for reg in linha:
             tabela.add_row(reg)

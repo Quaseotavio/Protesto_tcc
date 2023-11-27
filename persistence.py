@@ -108,7 +108,8 @@ def consulta_titulos_com_arq_e_tipo(arq, tipo):
 def consulta_titulos_arq(arq):
     resultado = list()
     cursor, conexao = bd_connect()
-    query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, descricao_ocorrencia   
+    query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, valor_titulo, saldo_titulo,
+         descricao_ocorrencia    
     FROM transacao AS t, codigos_ocorrencia AS c
     WHERE t.nosso_numero = %s AND t.ocorrencia = c.cod_ocorrencia'''
     for reg in arq:
@@ -123,12 +124,14 @@ def consulta_titulos_geral(tipo):
     resultado = list()
     cursor, conexao = bd_connect()
     if not tipo:
-        query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, descricao_ocorrencia   
+        query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, valor_titulo, saldo_titulo,
+         descricao_ocorrencia   
         FROM transacao AS t, codigos_ocorrencia AS c
         WHERE t.ocorrencia = c.cod_ocorrencia
         ORDER BY t.protocolo'''
     else:
-        query = f'''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, descricao_ocorrencia   
+        query = f'''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, valor_titulo, saldo_titulo,
+         descricao_ocorrencia    
         FROM transacao AS t, codigos_ocorrencia AS c
         WHERE t.ocorrencia = {tipo} AND t.ocorrencia = c.cod_ocorrencia
         ORDER BY t.protocolo'''
