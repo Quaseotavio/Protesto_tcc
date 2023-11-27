@@ -59,8 +59,6 @@ def main():
                     input()
                     p.retornar_titulos(titulos, header)
                     print(imprime_titulos(titulos, False))
-                    print('Pressione qualquer tecla para continuar.')
-                    input()
                 else:
                     print('O arquivo de retorno enviado possui títulos que não passaram pela distribuição.')
                     print('O arquivo não será tratado. Verifique e tente novamente.')
