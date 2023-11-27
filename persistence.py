@@ -45,9 +45,9 @@ def gravar_registros(arq, seq):
     (cod_agencia_cedente, cod_cedente, nome_cedente, nome_sacador, doc_sacador, end_sacador, cep_sacador,
     cidade_sacador, uf_sacador, nosso_numero, especie_titulo, num_titulo, data_emissao, data_vencimento,
     valor_titulo, saldo_titulo, endosso, aceite, nome_devedor, tipo_doc_devedor, doc_devedor, doc_devedor_pf,
-    endereco_devedor, cep_devedor, cidade_devedor, uf_devedor, bairro_devedor, sequencial_remessa)
+    endereco_devedor, cep_devedor, cidade_devedor, uf_devedor, bairro_devedor, sequencial_remessa, ocorrencia)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'Z')'''
     for reg in arq:
         reg['sequencial'] = seq
         param = tuple(reg.values())
@@ -79,7 +79,7 @@ def checar_remessa(header):
 
 def distribuir_titulos(arq, header):
     cursor, conexao = bd_connect()
-    query = 'UPDATE transacao SET protocolo = %s, data_protocolo = %s WHERE nosso_numero = %s'
+    query = 'UPDATE transacao SET protocolo = %s, data_protocolo = %s, ocorrencia = 0 WHERE nosso_numero = %s'
     for reg in arq:
         param = (reg['protocolo'], header['data_mov'], reg['nosso_numero'])
         cursor.execute(query, param)
@@ -91,13 +91,14 @@ def distribuir_titulos(arq, header):
     return
 
 
-def consulta_distribuicao(arq):
+def consulta_titulos(arq, tipo):
     resultado = list()
     cursor, conexao = bd_connect()
-    query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo 
-    FROM transacao WHERE nosso_numero = %s'''
+    query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, descricao_ocorrencia   
+    FROM transacao AS t, codigos_ocorrencia AS c
+    WHERE t.ocorrencia = %s AND t.ocorrencia = c.cod_ocorrencia AND t.nosso_numero = %s'''
     for reg in arq:
-        param = (reg['nosso_numero'],)
+        param = (tipo, reg['nosso_numero'],)
         cursor.execute(query, param)
         resultado.append(cursor.fetchall())
     return resultado

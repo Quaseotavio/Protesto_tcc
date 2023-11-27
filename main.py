@@ -1,6 +1,7 @@
 import services as s
 import persistence as p
 import os
+from prettytable import PrettyTable
 
 
 def main():
@@ -41,9 +42,10 @@ def main():
                 if validacao:
                     print('Você enviou um arquivo de confirmação de distribuição.')
                     print('Pressione qualquer tecla para verificar os títulos distribuídos.')
+                    input()
                     p.distribuir_titulos(titulos, header)
-                    resultado = p.consulta_distribuicao(titulos)
-                    print(resultado)
+                    print(imprime_titulos(titulos, 0))
+                    print('Pressione qualquer tecla para continuar.')
                     input()
                 else:
                     print('Você enviou um arquivo de confirmação de uma remessa que não consta no banco de dados.')
@@ -94,6 +96,19 @@ def montar_remessa(arquivo, header):
             p.gravar_registros(arquivo, header['sequencial'])
             break
     return
+
+
+def imprime_titulos(arq, tipo):
+    conteudo = p.consulta_titulos(arq, tipo)
+    print(conteudo)
+    if not conteudo:
+        return 'Nenhum resultado encontrado.'
+    tabela = PrettyTable()
+    tabela.field_names = ["COD CEDENTE", "CEDENTE", "DEVEDOR", "NOSSO NUMERO", "PROTOCOLO", "STATUS"]
+    for linha in conteudo:
+        for reg in linha:
+         tabela.add_row(reg)
+    return tabela
 
 
 main()
