@@ -51,6 +51,10 @@ def main():
                     print('Você enviou um arquivo de confirmação de uma remessa que não consta no banco de dados.')
                     print('O arquivo não será tratado. Pressione qualquer tecla para continuar.')
                     input()
+        elif opt == 2:
+            print(imprime_titulos(False, '0'))
+            print('Pressione qualquer tecla para continuar.')
+            input()
 
 
 def montar_remessa(arquivo, header):
@@ -99,7 +103,10 @@ def montar_remessa(arquivo, header):
 
 
 def imprime_titulos(arq, tipo):
-    conteudo = p.consulta_titulos(arq, tipo)
+    if not arq:
+        conteudo = p.consulta_titulos_geral(tipo)
+    else:
+        conteudo = p.consulta_titulos_arq(arq, tipo)
     if not conteudo:
         return 'Nenhum resultado encontrado.'
     tabela = PrettyTable()
