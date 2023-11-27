@@ -124,8 +124,10 @@ def montar_remessa(arquivo, header):
 def imprime_titulos(arq, tipo):
     if not arq:
         conteudo = p.consulta_titulos_geral(tipo)
+    elif not tipo:
+        conteudo = (p.consulta_titulos_arq(arq))
     else:
-        conteudo = p.consulta_titulos_arq(arq, tipo)
+        conteudo = p.consulta_titulos_com_arq_e_tipo(arq, tipo)
     if not conteudo:
         return 'Nenhum resultado encontrado.'
     tabela = PrettyTable()

@@ -91,7 +91,7 @@ def distribuir_titulos(arq, header):
     return
 
 
-def consulta_titulos_arq(arq, tipo):
+def consulta_titulos_com_arq_e_tipo(arq, tipo):
     resultado = list()
     cursor, conexao = bd_connect()
     query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, descricao_ocorrencia   
@@ -99,6 +99,20 @@ def consulta_titulos_arq(arq, tipo):
     WHERE t.ocorrencia = %s AND t.ocorrencia = c.cod_ocorrencia AND t.nosso_numero = %s'''
     for reg in arq:
         param = (tipo, reg['nosso_numero'],)
+        cursor.execute(query, param)
+        resultado.append(cursor.fetchall())
+    conexao.close()
+    return resultado
+
+
+def consulta_titulos_arq(arq):
+    resultado = list()
+    cursor, conexao = bd_connect()
+    query = '''SELECT cod_cedente, nome_cedente, nome_devedor, nosso_numero, protocolo, descricao_ocorrencia   
+    FROM transacao AS t, codigos_ocorrencia AS c
+    WHERE t.nosso_numero = %s AND t.ocorrencia = c.cod_ocorrencia'''
+    for reg in arq:
+        param = (reg['nosso_numero'],)
         cursor.execute(query, param)
         resultado.append(cursor.fetchall())
     conexao.close()
